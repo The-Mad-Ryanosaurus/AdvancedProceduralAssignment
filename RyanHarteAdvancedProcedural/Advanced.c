@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-
+//Hello Me - This is to test Git is working so I can work from Home and College
 typedef struct company {
 
 	int companyReg;
