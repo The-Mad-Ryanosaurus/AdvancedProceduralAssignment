@@ -1,6 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-//Hello Me - This is to test Git is working so I can work from Home and College
+
 typedef struct company {
 
 	int companyReg;
@@ -19,6 +20,9 @@ typedef struct company {
 
 struct company* createNode();
 
+void loginUser(void);
+
+
 void addCompany(struct company** top);
 void displayCompanyList(companyT* top, int searchID);
 int displaySpecificCompany(companyT* top, int searchID);
@@ -28,61 +32,66 @@ void outputToFile(struct company* top);
 void readFromFile(companyT** top);
 
 
+
 void main() {
 
 	companyT* headPtr = NULL;
 	companyT* newNode;
 	companyT* temp;
 
+	char username[10];
+	char password[10];
+
+	char username1[10];
+	char password1[10];
+
+	char ch = 0;
+
 	int choice;
 	int searchID = 0;
 	int result = 0;
+	int i;
+	int correct = -1;
+	int credentialsUser;
+	int credentialsPass;
+	
+	FILE* lPtr;
 
-	readFromFile(&headPtr);
+	lPtr = fopen("login.txt", "r");
 
+	printf("Enter Username:\n");
+	gets(username1);
+	printf("Enter Password:\n");
+	//gets(password1);
+	for ( i = 0; i < 10; i++) {
 
-	printf("Please enter 1 to add a Company to the list\n");
-	printf("Please enter 2 to display all Companies Listed\n");
-	printf("Please enter 3 to display a specific Company and its details\n");
-	printf("Please enter 4 to update a specific Company\n");
-	printf("Please enter 5 to delete a specific Company\n");
-	printf("Please enter 6 to print a Client Report for all Companies\n");
+		ch = getch();
+		if (ch == 13) 
+			break;
+		
+		password1[i] = ch;
+		ch = '*';
+		printf("%c", ch);
+	}
+	password1[i] = '\0';
+	printf("\n");
 
-	scanf("%d", &choice);
+	for (i = 0; i < 3; i++)
+	{
+		fscanf(lPtr, "%s %s", username, password);
 
+		credentialsUser = strcmp(username, username1);
+		credentialsPass = strcmp(password, password1);
 
-
-	while (choice != -1) {
-		if (choice == 1) {
-			addCompany(&headPtr);
+		if (credentialsUser == 0 && credentialsPass == 0) {
+			printf("\n---Login Successful---\n");
+			correct = 1;
+			break;
 		}
-		else if (choice == 2) {
-			displayCompanyList(headPtr, searchID);
-		}
-		else if (choice == 3) {
-			temp = headPtr;
-			printf("Enter Company Registration Number for Details\n");
-			scanf("%d", &searchID);
+	}
 
-			result = displaySpecificCompany(headPtr, searchID);
-		}
-		else if (choice == 4) {
-			temp = headPtr;
-			printf("Enter Company Registration Number for Update\n");
-			scanf("%d", &searchID);
-
-			updateCompany(headPtr, searchID);
-		}
-		else if (choice == 5) {
-			temp = headPtr;
-			printf("Enter Company Resistration Number for Deletion\n");
-			scanf("%d", &searchID);
-
-			deleteCompany(&headPtr, searchID);
-		}
-		else if (choice == 6) {
-			outputToFile(headPtr);
-		}
+	if (correct == 1) {
+		readFromFile(&headPtr);
 
 
 		printf("Please enter 1 to add a Company to the list\n");
@@ -90,10 +99,63 @@ void main() {
 		printf("Please enter 3 to display a specific Company and its details\n");
 		printf("Please enter 4 to update a specific Company\n");
 		printf("Please enter 5 to delete a specific Company\n");
-		printf("Please enter 6 to print all Company Information to a text file\n");
+		printf("Please enter 6 to print a Client Report for all Companies\n");
+
 		scanf("%d", &choice);
+
+
+
+		while (choice != -1) {
+			if (choice == 1) {
+				addCompany(&headPtr);
+			}
+			else if (choice == 2) {
+				displayCompanyList(headPtr, searchID);
+			}
+			else if (choice == 3) {
+				temp = headPtr;
+				printf("Enter Company Registration Number for Details\n");
+				scanf("%d", &searchID);
+
+				result = displaySpecificCompany(headPtr, searchID);
+			}
+			else if (choice == 4) {
+				temp = headPtr;
+				printf("Enter Company Registration Number for Update\n");
+				scanf("%d", &searchID);
+
+				updateCompany(headPtr, searchID);
+			}
+			else if (choice == 5) {
+				temp = headPtr;
+				printf("Enter Company Resistration Number for Deletion\n");
+				scanf("%d", &searchID);
+
+				deleteCompany(&headPtr, searchID);
+			}
+			else if (choice == 6) {
+				outputToFile(headPtr);
+			}
+
+
+			printf("Please enter 1 to add a Company to the list\n");
+			printf("Please enter 2 to display all Companies Listed\n");
+			printf("Please enter 3 to display a specific Company and its details\n");
+			printf("Please enter 4 to update a specific Company\n");
+			printf("Please enter 5 to delete a specific Company\n");
+			printf("Please enter 6 to print all Company Information to a text file\n");
+			scanf("%d", &choice);
+		}
+		outputToFile(headPtr);
 	}
-	outputToFile(headPtr);
+	else
+
+
+	printf("\n---Username and Password Incorrect---\n");
+	printf("\n---Exit Application and try again---\n");
+
+	fclose(lPtr);
+	return;
 }
 
 
@@ -291,7 +353,6 @@ void outputToFile(struct company* top) {
 	{
 		if (fp != NULL)
 		{
-			//fprintf(fp, "Company Registration Number: %d\nCompany Name: %s\nCompany Country of Operation: %s\nCompany Founded: %d\n", temp->companyReg, temp->companyName, temp->country, temp->yearFounded);
 			fprintf(fp, "%d\t", temp->companyReg);
 			fprintf(fp, "%s\t", temp->companyName);
 			fprintf(fp, "%s\t", temp->country);
@@ -302,7 +363,6 @@ void outputToFile(struct company* top) {
 			fprintf(fp, "%.2f\t", temp->averageTurnover);
 			fprintf(fp, "%.2f\t", temp->lastOrder);
 			fprintf(fp, "%s\n", temp->vatRegistered);
-			//fprintf(fp, "%s\t%s\t%d\t%.2f\t%.2f\t%s\t", temp->email, temp->contactName, temp->numEmployees, temp->averageTurnover, temp->lastOrder, temp->vatRegistered);
 		}
 		temp = temp->NEXT;
 	}
@@ -318,7 +378,7 @@ void readFromFile(companyT** top) {
 	FILE* ptr;
 	companyT* temp;
 
-	// Opening file in reading mode
+	
 	ptr = fopen("company.txt", "r");
 	fscanf(ptr, "\n");
 
