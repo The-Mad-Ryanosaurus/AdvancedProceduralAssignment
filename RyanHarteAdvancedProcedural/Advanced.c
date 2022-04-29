@@ -22,7 +22,7 @@ struct company* createNode();
 
 void loginUser(void);
 
-
+int filter(companyT* top, int possReg);
 void addCompany(struct company** top);
 void displayCompanyList(companyT* top, int searchID);
 int displaySpecificCompany(companyT* top, int searchID);
@@ -49,12 +49,14 @@ void main() {
 
 	int choice;
 	int searchID = 0;
-	int result = 0;
+	int result1 = 0;
 	int i;
 	int correct = -1;
 	int credentialsUser;
 	int credentialsPass;
-	
+
+	int possReg;
+
 	FILE* lPtr;
 
 	lPtr = fopen("login.txt", "r");
@@ -63,12 +65,12 @@ void main() {
 	gets(username1);
 	printf("Enter Password:\n");
 	//gets(password1);
-	for ( i = 0; i < 10; i++) {
+	for (i = 0; i < 100; i++) {
 
 		ch = getch();
-		if (ch == 13) 
+		if (ch == 13)
 			break;
-		
+
 		password1[i] = ch;
 		ch = '*';
 		printf("%c", ch);
@@ -76,7 +78,7 @@ void main() {
 	password1[i] = '\0';
 	printf("\n");
 
-	for (i = 0; i < 3; i++)
+	for (i = 0; i < 5; i++)
 	{
 		fscanf(lPtr, "%s %s", username, password);
 
@@ -107,7 +109,19 @@ void main() {
 
 		while (choice != -1) {
 			if (choice == 1) {
-				addCompany(&headPtr);
+				printf("Enter Company Registration Number for Verification\n");
+				scanf("%d", &possReg);
+				int result = filter(headPtr, possReg);
+
+				if (result == 1) {
+					printf("\nCompany Registration Number Already Exists\n\n");
+				}
+				else {
+					addCompany(&headPtr);
+				}
+				result = 0;
+				possReg = 0;
+				
 			}
 			else if (choice == 2) {
 				displayCompanyList(headPtr, searchID);
@@ -117,7 +131,7 @@ void main() {
 				printf("Enter Company Registration Number for Details\n");
 				scanf("%d", &searchID);
 
-				result = displaySpecificCompany(headPtr, searchID);
+				result1 = displaySpecificCompany(headPtr, searchID);
 			}
 			else if (choice == 4) {
 				temp = headPtr;
@@ -158,9 +172,25 @@ void main() {
 	return;
 }
 
+int filter(companyT* top, int possReg) {
+
+
+	companyT* temp = top;
+	int found = 0;
+
+	while (temp != NULL) {
+		if ((temp)->companyReg == possReg) {
+			found = 1;
+		}
+		temp = temp->NEXT;
+	}
+	possReg = 0;
+	return found;
+}
 
 
 void addCompany(struct company** top) {
+
 	struct company* temp;
 
 	temp = *top;
@@ -170,7 +200,7 @@ void addCompany(struct company** top) {
 
 		companyT* newNode = (struct company*)malloc(sizeof(struct company));
 
-		printf("Enter Company Registration Number\n");
+		printf("Registration Number Verified - Enter Company Registration Number to Confirm\n");
 		scanf("%d", &newNode->companyReg);
 		printf("Enter Company Name\n");
 		scanf("%s", newNode->companyName);
@@ -178,8 +208,12 @@ void addCompany(struct company** top) {
 		scanf("%s", newNode->country);
 		printf("Enter Company Founded Year\n");
 		scanf("%d", &newNode->yearFounded);
-		printf("Enter Company Email\n");
-		scanf("%s", newNode->email);
+		
+		do {
+			printf("Enter Company Email\n");
+			scanf("%s", newNode->email);
+		} while (strstr(newNode->email, "@") == NULL || strstr(newNode->email, ".com") == NULL);
+
 		printf("Enter Company Contact Name\n");
 		scanf("%s", newNode->contactName);
 		printf("Enter Company Workforce - Employees working for the Company\n");
@@ -203,7 +237,7 @@ void addCompany(struct company** top) {
 
 				companyT* newNode = (struct company*)malloc(sizeof(struct company));
 
-				printf("Enter Company Registration Number\n");
+				printf("Registration Number Verified - Enter Company Registration Number to Confirm\n");
 				scanf("%d", &newNode->companyReg);
 				printf("Enter Company Name\n");
 				scanf("%s", newNode->companyName);
@@ -211,8 +245,12 @@ void addCompany(struct company** top) {
 				scanf("%s", newNode->country);
 				printf("Enter Company Founded Year\n");
 				scanf("%d", &newNode->yearFounded);
-				printf("Enter Company Email\n");
-				scanf("%s", newNode->email);
+				
+				do {
+					printf("Enter Company Email\n");
+					scanf("%s", newNode->email);
+				} while (strstr(newNode->email, "@") == NULL || strstr(newNode->email, ".com") == NULL);
+
 				printf("Enter Company Contact Name\n");
 				scanf("%s", newNode->contactName);
 				printf("Enter Company Workforce - Employees working for the Company\n");
@@ -230,11 +268,11 @@ void addCompany(struct company** top) {
 				temp->NEXT = newNode;
 				return;
 			}
+			temp = temp->NEXT;
 		}
-		temp = temp->NEXT;
-
 	}
 }
+
 
 void displayCompanyList(companyT* top, int searchID) {
 
@@ -378,7 +416,7 @@ void readFromFile(companyT** top) {
 	FILE* ptr;
 	companyT* temp;
 
-	
+
 	ptr = fopen("company.txt", "r");
 	fscanf(ptr, "\n");
 
