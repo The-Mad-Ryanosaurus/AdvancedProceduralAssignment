@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+//Definies elements of the struct company
 typedef struct company {
 
 	int companyReg;
@@ -20,7 +21,7 @@ typedef struct company {
 
 struct company* createNode();
 
-void loginUser(void);
+//Method Declerations
 
 int filter(companyT* top, int possReg);
 void addCompany(struct company** top);
@@ -32,7 +33,7 @@ void outputToFile(struct company* top);
 void readFromFile(companyT** top);
 
 
-
+//Main Method, Contains User Login and Verification/Menu for User Inputs. 
 void main() {
 
 	companyT* headPtr = NULL;
@@ -56,7 +57,7 @@ void main() {
 	int credentialsPass;
 
 	int possReg;
-
+	//Login File where username and passwords are stored
 	FILE* lPtr;
 
 	lPtr = fopen("login.txt", "r");
@@ -64,7 +65,7 @@ void main() {
 	printf("Enter Username:\n");
 	gets(username1);
 	printf("Enter Password:\n");
-	//gets(password1);
+	//for loop for * the password
 	for (i = 0; i < 100; i++) {
 
 		ch = getch();
@@ -77,7 +78,7 @@ void main() {
 	}
 	password1[i] = '\0';
 	printf("\n");
-
+	//For loop for verification - set to 5 as I have a 1 1 login for testing
 	for (i = 0; i < 5; i++)
 	{
 		fscanf(lPtr, "%s %s", username, password);
@@ -171,7 +172,7 @@ void main() {
 	fclose(lPtr);
 	return;
 }
-
+//Method for searching company reg numbers to see if they have been used - Unique Company ID
 int filter(companyT* top, int possReg) {
 
 
@@ -188,7 +189,7 @@ int filter(companyT* top, int possReg) {
 	return found;
 }
 
-
+//Method to add a Company to a linked list - email check
 void addCompany(struct company** top) {
 
 	struct company* temp;
@@ -208,7 +209,7 @@ void addCompany(struct company** top) {
 		scanf("%s", newNode->country);
 		printf("Enter Company Founded Year\n");
 		scanf("%d", &newNode->yearFounded);
-		
+		//email check
 		do {
 			printf("Enter Company Email\n");
 			scanf("%s", newNode->email);
@@ -245,7 +246,7 @@ void addCompany(struct company** top) {
 				scanf("%s", newNode->country);
 				printf("Enter Company Founded Year\n");
 				scanf("%d", &newNode->yearFounded);
-				
+				//email check
 				do {
 					printf("Enter Company Email\n");
 					scanf("%s", newNode->email);
@@ -273,7 +274,7 @@ void addCompany(struct company** top) {
 	}
 }
 
-
+//Displays all comapanies that are in the database/created
 void displayCompanyList(companyT* top, int searchID) {
 
 	struct company* temp;
@@ -287,7 +288,7 @@ void displayCompanyList(companyT* top, int searchID) {
 		temp = temp->NEXT;
 	}
 }
-
+//Displays a specific company by search of their company reg number
 int displaySpecificCompany(companyT* top, int searchID) {
 
 	companyT* temp = top;
@@ -306,7 +307,7 @@ int displaySpecificCompany(companyT* top, int searchID) {
 	printf("Company %d is not found in this Database\n", searchID);
 	return result;
 }
-
+//Updates a company and is done by searching the company reg number
 void updateCompany(companyT** top, int searchID) {
 
 	companyT* temp = top;
@@ -343,7 +344,7 @@ void updateCompany(companyT** top, int searchID) {
 		temp = temp->NEXT;
 	}
 }
-
+//deletes a company by search of their company reg number
 void deleteCompany(companyT** top, int searchID) {
 
 	struct company* temp1 = *top;
@@ -378,7 +379,7 @@ void deleteCompany(companyT** top, int searchID) {
 	printf("Company %d is not found in this database\n", searchID);
 
 }
-
+//Outputs all companies to a text file
 void outputToFile(struct company* top) {
 
 	struct company* temp;
@@ -410,7 +411,7 @@ void outputToFile(struct company* top) {
 		fclose(fp);
 	}
 }
-
+//reads in all comapnies in the text file. Upon close and open of application all previous companies will be saved and be able to be displayed
 void readFromFile(companyT** top) {
 
 	FILE* ptr;
